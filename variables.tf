@@ -2,8 +2,6 @@ variable "aws_region" {}
 
 # ---- root networking variables -----
 
-data "aws_availability_zones" "available" {}
-
 variable "vpc_cidr" {}
 
 variable "public_cidrs" {
@@ -18,9 +16,7 @@ variable "key_name" {}
 
 variable "public_key_path" {}
 
-variable "bastion_instance_type" {}
-
-variable "bastion_ami" {}
+variable "server_instance_type" {}
 
 variable "instance_count" {
   default = 1

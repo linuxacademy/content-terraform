@@ -1,3 +1,5 @@
+#----------root--------------
+
 provider "aws" {
   region = "${var.aws_region}"
 }
@@ -16,11 +18,10 @@ module "compute" {
   instance_count  = "${var.instance_count}"
   key_name        = "${var.key_name}"
   public_key_path = "${var.public_key_path}"
-  instance_type   = "${var.bastion_instance_type}"
+  instance_type   = "${var.server_instance_type}"
   instance_count  = "${var.instance_count}"
-  ami             = "${var.bastion_ami}"
   subnets         = "${module.networking.public_subnets}"
-  security_group  = "${module.networking.bastion_sg}"
+  security_group  = "${module.networking.public_sg}"
   subnet_ips      = "${module.networking.subnet_ips}"
 }
 

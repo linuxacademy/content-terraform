@@ -1,5 +1,7 @@
 #--------networking-----------
 
+data "aws_availability_zones" "available" {}
+
 resource "aws_vpc" "tf_vpc" {
   cidr_block           = "${var.vpc_cidr}"
   enable_dns_hostnames = true
@@ -65,9 +67,9 @@ resource "aws_route_table_association" "tf_public_assoc" {
 
 #Security groups
 
-resource "aws_security_group" "tf_bastion_sg" {
-  name        = "tf_bastion_sg"
-  description = "Used for access to the bastion instance"
+resource "aws_security_group" "tf_public_sg" {
+  name        = "tf_public_sg"
+  description = "Used for access to the public instance"
   vpc_id      = "${aws_vpc.tf_vpc.id}"
 
   #SSH

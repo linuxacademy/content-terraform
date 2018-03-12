@@ -4,8 +4,6 @@ variable "public_key_path" {}
 
 variable "instance_type" {}
 
-variable "ami" {}
-
 variable "security_group" {}
 
 variable "subnets" {

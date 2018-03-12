@@ -1,6 +1,6 @@
 #--------compute-----------
 # AMI
-data "aws_ami" "bastion_ami" {
+data "aws_ami" "server_ami" {
   most_recent = true
 
   filter {
@@ -31,23 +31,19 @@ data "template_file" "user-init" {
     #firewall_subnets = "${element(var.subnets, count.index)}"
     firewall_subnets = "${element(var.subnet_ips, count.index)}"
 
-    #bastionip = "${join(", ", aws_instance.tf_bastion.*.public_ip)}"
+    #publicip = "${join(", ", aws_instance.tf_server.*.public_ip)}"
   }
 }
 
-#bastion host
+#Server
 
-resource "aws_instance" "tf_bastion" {
+resource "aws_instance" "tf_server" {
   count         = "${var.instance_count}"
   instance_type = "${var.instance_type}"
-
-  #ami           = "${var.ami}"
-  ami = "${data.aws_ami.bastion_ami.id}"
-
+  ami = "${data.aws_ami.server_ami.id}"
   tags {
-    Name = "tf_bastion-${count.index + 1}"
+    Name = "tf_server-${count.index + 1}"
   }
-
   key_name               = "${aws_key_pair.tf_auth.id}"
   vpc_security_group_ids = ["${var.security_group}"]
   subnet_id              = "${element(var.subnets, count.index)}"

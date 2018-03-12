@@ -5,21 +5,21 @@ output "Public Subnets" {
 }
 
 output "Subnet IPs" {
-  value = "${module.networking.subnet_ips}"
+  value = "${join(", ", module.networking.subnet_ips)}"
 }
 
-output "Bastion Security Group" {
-  value = "${module.networking.bastion_sg}"
+output "public Security Group" {
+  value = "${module.networking.public_sg}"
 }
 
 # -------- root compute outputs -----------
 
-output "Bastion Instance IDs" {
-  value = "${module.compute.bastion_instance_id}"
+output "public Instance IDs" {
+  value = "${module.compute.server_id}"
 }
 
-output "Bastion Public IPs" {
-  value = "${module.compute.bastion_public_ip}"
+output "Public Instance IPs" {
+  value = "${module.compute.server_ip}"
 }
 
 # ------- root storage outputs ----------

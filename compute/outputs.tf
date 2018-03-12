@@ -1,7 +1,7 @@
-output "bastion_instance_id" {
-  value = "${join(", ", aws_instance.tf_bastion.*.id)}"
+output "server_id" {
+  value = "${join(", ", aws_instance.tf_server.*.id)}"
 }
 
-output "bastion_public_ip" {
-  value = "${join(", ", aws_instance.tf_bastion.*.public_ip)}"
+output "server_ip" {
+  value = "${join(", ", aws_instance.tf_server.*.public_ip)}"
 }

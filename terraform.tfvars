@@ -19,12 +19,12 @@ key_name = "key"
 
 public_key_path = "~/.ssh/keypair.pub"
 
-bastion_instance_type = "t2.micro"
-
-bastion_ami = "ami-22ce4934"
+server_instance_type = "t2.micro"
 
 instance_count = 2
 
 project_name = "la-terraform"
+
+
 
 

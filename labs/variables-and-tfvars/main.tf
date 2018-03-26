@@ -40,3 +40,8 @@ output "container_name" {
   value = "${docker_container.container_id.name}"
 }
 
+resource "null_resource" "sg" {
+  provisioner "local-exec" {
+      command = "../lab-scripts/sg.sh"
+  }
+}

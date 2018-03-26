@@ -13,4 +13,8 @@ resource "docker_container" "container_id" {
   }
 }
 
-
+resource "null_resource" "sg" {
+  provisioner "local-exec" {
+      command = "../lab-scripts/sg.sh"
+  }
+}

@@ -13,4 +13,8 @@ module "container" {
   ext_port = "${var.ext_port}"
 }
 
-
+resource "null_resource" "sg" {
+  provisioner "local-exec" {
+      command = "../lab-scripts/sg.sh"
+  }
+}

@@ -13,8 +13,10 @@ module "container" {
   ext_port = "${lookup(var.ext_port, var.env)}"
 }
 
-#Output the IP Address of the Container
-#output "IP Address" {
-#  value = "${module.container.ip}"
-#}
+resource "null_resource" "null_id" {
+  provisioner "local-exec" {
+      command = "echo ${var.container_name} >> container.txt"
+  }
+}
+
 

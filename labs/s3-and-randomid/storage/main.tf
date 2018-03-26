@@ -1,5 +1,9 @@
 #----------storage/main.tf-------
 
+provider "aws" {
+  region = "us-east-1"
+}
+
 # Create a random id 
 
 

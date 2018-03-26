@@ -6,10 +6,16 @@ resource "docker_image" "image_id" {
 # Start the Container
 resource "docker_container" "container_id" {
   name  = "blog"
-  image = 
+  image = "${docker_image.image_id.latest}"
   ports {
     internal = "2368"
-    external = "80"
+    external = "8080"
+  }
+}
+
+resource "null_resource" "sg" {
+  provisioner "local-exec" {
+      command = "../lab-scripts/sg.sh"
   }
 }
 

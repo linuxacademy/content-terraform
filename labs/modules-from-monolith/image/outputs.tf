@@ -1,0 +1,1 @@
+# Output the latest image

@@ -1,0 +1,1 @@
+# Variable for the image

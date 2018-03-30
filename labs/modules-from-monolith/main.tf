@@ -13,3 +13,16 @@ module "container" {
 }
 
 
+
+
+
+
+
+resource "null_resource" "sg" {
+  provisioner "local-exec" {
+      command = "../lab-scripts/sg.sh"
+  }
+}
+
+
+

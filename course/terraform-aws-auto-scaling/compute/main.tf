@@ -1,17 +1,18 @@
+#---compute/main.tf
+
 # key pair
 resource "aws_key_pair" "auth" {
   key_name   = "${var.key_name}"
   public_key = "${file(var.public_key_path)}"
 }
 
-
-# create dev instance
-resource "aws_instance" "dev" {
+# create private instance
+resource "aws_instance" "private_server" {
   instance_type = "${var.instance_type}"
   ami           = "${var.instance_ami}"
 
   tags {
-    Name = "wordpress-instance"
+    Name = "tf_private server"
   }
 
   key_name               = "${aws_key_pair.auth.id}"
@@ -22,13 +23,13 @@ resource "aws_instance" "dev" {
     command = <<EOD
 cat <<EOF > aws_hosts
 [dev]
-${aws_instance.dev.public_ip}
+${aws_instance.private_server.public_ip}
 EOF
 EOD
   }
 
   provisioner "local-exec" {
-    command = "aws ec2 wait instance-status-ok --instance-ids ${aws_instance.dev.id}  && ansible-playbook -i aws_hosts wordpress.yml"
+    command = "aws ec2 wait instance-status-ok --instance-ids ${aws_instance.private_server.id}  && ansible-playbook -i aws_hosts wordpress.yml"
   }
 }
 

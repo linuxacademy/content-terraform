@@ -1,4 +1,9 @@
+#provider
 provider "aws" {
+  access_key = "${var.aws_access_key}"
+  secret_key = "${var.aws_secret_key}"
+
+  #aws_profile = "${var.aws_profile}"
   region = "${var.aws_region}"
 }
 
@@ -18,7 +23,7 @@ resource "aws_internet_gateway" "internet_gateway" {
 resource "aws_subnet" "tf_public_subnet" {
   count                   = "${var.subnet_count}"
   vpc_id                  = "${aws_vpc.tf_vpc.id}"
-  cidr_block              = "${var.public_subnets[count.index]}"
+  cidr_block              = "${var.public_subnet_cidrs[count.index]}"
   map_public_ip_on_launch = true
   availability_zone       = "${data.aws_availability_zones.available.names[count.index]}"
 
@@ -27,12 +32,11 @@ resource "aws_subnet" "tf_public_subnet" {
   }
 }
 
-
 #create multiple private subnet
 resource "aws_subnet" "tf_private_subnet" {
   count                   = "${var.subnet_count}"
   vpc_id                  = "${aws_vpc.tf_vpc.id}"
-  cidr_block              = "${var.private_subnets[count.index]}"
+  cidr_block              = "${var.private_subnet_cidrs[count.index]}"
   map_public_ip_on_launch = false
   availability_zone       = "${data.aws_availability_zones.available.names[count.index]}"
 
@@ -78,12 +82,26 @@ resource "aws_route_table_association" "tf_private_assoc" {
   route_table_id = "${aws_default_route_table.tf_private_rt.id}"
 }
 
+#EIP
+resource "aws_eip" "nat_eip" {
+  vpc = true
+}
 
-#Dev security group
+#Nat gateway
+resource "aws_nat_gateway" "nat_gw" {
+  allocation_id = "${aws_eip.nat_eip.id}"
+  subnet_id     = "${aws_subnet.tf_public_subnet.*.id}"
 
-resource "aws_security_group" "dev_sg" {
-  name        = "dev_sg"
-  description = "Used for access to the dev instance"
+  tags {
+    Name = "nat gateway"
+  }
+}
+
+#Private security group
+
+resource "aws_security_group" "private_sg" {
+  name        = "private_sg"
+  description = "Used for access to private instances"
   vpc_id      = "${aws_vpc.tf_vpc.id}"
 
   #SSH
@@ -92,7 +110,7 @@ resource "aws_security_group" "dev_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${var.localip}"]
+    cidr_blocks = ["${var.accessip}"]
   }
 
   #HTTP
@@ -105,10 +123,43 @@ resource "aws_security_group" "dev_sg" {
   }
 }
 
-
 #Bastion host security group (public)
 resource "aws_security_group" "public_sg" {
-  name        = "sg_public"
+  name        = "public_sg"
+  description = "Used for public instances"
+  vpc_id      = "${aws_vpc.tf_vpc.id}"
+
+  #SSH
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["${var.accessip}"]
+  }
+
+  #HTTP
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  #Outbound internet access
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+#ALB Security group
+resource "aws_security_group" "alb_sg" {
+  name        = "public_sg"
   description = "Used for public and private instances for load balancer access"
   vpc_id      = "${aws_vpc.tf_vpc.id}"
 
@@ -118,10 +169,10 @@ resource "aws_security_group" "public_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${var.localip}"]
+    cidr_blocks = ["${var.accessip}"]
   }
 
- #HTTP
+  #HTTP
 
   ingress {
     from_port   = 80
@@ -130,7 +181,7 @@ resource "aws_security_group" "public_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-#Outbound internet access
+  #Outbound internet access
 
   egress {
     from_port   = 0
@@ -139,4 +190,3 @@ resource "aws_security_group" "public_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
- 

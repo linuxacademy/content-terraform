@@ -1,17 +1,19 @@
 #-----compute/main.tf
 
-data "aws_ami" "server_ami" {
+data "aws_ami" "ubuntu" {
   most_recent = true
 
   filter {
-    name   = "owner-alias"
-    values = ["amazon"]
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server*"]
   }
 
   filter {
-    name   = "name"
-    values = ["amzn-ami-hvm*-x86_64-gp2"]
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
+
+  #owners = ["546353946052"] # Canonical
 }
 
 resource "aws_key_pair" "tf_auth" {
@@ -28,13 +30,13 @@ data "template_file" "user-init" {
   }
 }
 
-resource "aws_instance" "tf_server" {
+resource "aws_instance" "example_server" {
   count         = "${var.instance_count}"
   instance_type = "${var.instance_type}"
-  ami           = "${data.aws_ami.server_ami.id}"
+  ami           = "${data.aws_ami.ubuntu.id}"
 
   tags {
-    Name = "tf_server-${count.index +1}"
+    Name = "tf_cica_ubuntu_example_server-${count.index +1}"
   }
 
   key_name               = "${aws_key_pair.tf_auth.id}"

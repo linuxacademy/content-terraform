@@ -1,12 +1,8 @@
 #-----compute/main.tf
 
 data "aws_ami" "server_ami" {
+  owners = ["amazon"]
   most_recent = true
-
-  filter {
-    name   = "owner-alias"
-    values = ["amazon"]
-  }
 
   filter {
     name   = "name"

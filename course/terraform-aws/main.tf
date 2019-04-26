@@ -1,12 +1,14 @@
 provider "aws" {
-  region = "${var.aws_region}"
+  access_key = "${var.aws_access_key}"
+  secret_key = "${var.aws_secret_key}"
+  region     = "${var.aws_region}"
 }
 
 terraform {
   backend "s3" {
-    bucket = "la-terraform-course-state"
-    key = "terraform/terraform.tfstate"
-    region = "us-west-2"
+    bucket = "cica-terraform-1111113454"
+    key    = "terraform/terraform.tfstate"
+    region = "eu-west-1"
   }
 }
 

@@ -15,8 +15,6 @@ module "container" {
 
 resource "null_resource" "null_id" {
   provisioner "local-exec" {
-      command = "echo ${var.container_name} >> container.txt"
+    command = "echo ${module.container.container_name}:${module.container.ip} > container.txt"
   }
 }
-
-

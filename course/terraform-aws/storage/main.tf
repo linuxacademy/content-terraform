@@ -1,6 +1,6 @@
 #----------storage/main.tf-------
 
-# Create a random id 
+# Create a random id
 
 resource "random_id" "tf_bucket_id" {
   byte_length = 2
@@ -14,6 +14,6 @@ resource "aws_s3_bucket" "tf_code" {
   force_destroy = true
 
   tags {
-    Name = "tf_bucket"
+    Name = "tf_backend_bucket"
   }
 }
